@@ -57,7 +57,6 @@ router.get("/:id", async (req, res) => {
 router.get("/:id/edit", async (req, res) => {
   try {
     const author = await Author.findById(req.params.id);
-    console.log("after the database fetch");
     res.render("authors/edit", { author: author });
   } catch {
     res.redirect("/authors");
