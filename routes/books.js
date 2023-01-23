@@ -1,35 +1,35 @@
-const express = require('express')
-const router = express.Router()
-const Book = require('../models/book')
-const Author = require('../models/author')
-const imageMimeTypes = ['image/jpeg', 'image/png', 'images/gif']
+const express = require('express');
+const router = express.Router();
+const Book = require('../models/book');
+const Author = require('../models/author');
+const imageMimeTypes = ['image/jpeg', 'image/png', 'images/gif'];
 
 // All Books Route
 router.get('/', async (req, res) => {
-  let query = Book.find()
+  let query = Book.find();
   if (req.query.title != null && req.query.title != '') {
-    query = query.regex('title', new RegExp(req.query.title, 'i'))
+    query = query.regex('title', new RegExp(req.query.title, 'i'));
   }
   if (req.query.publishedBefore != null && req.query.publishedBefore != '') {
-    query = query.lte('publishDate', req.query.publishedBefore)
+    query = query.lte('publishDate', req.query.publishedBefore);
   }
   if (req.query.publishedAfter != null && req.query.publishedAfter != '') {
-    query = query.gte('publishDate', req.query.publishedAfter)
+    query = query.gte('publishDate', req.query.publishedAfter);
   }
   try {
-    const books = await query.exec()
+    const books = await query.exec();
     res.render('books/index', {
       books: books,
       searchOptions: req.query
     })
   } catch {
-    res.redirect('/')
+    res.redirect('/');
   }
 })
 
 // New Book Route
 router.get('/new', async (req, res) => {
-  renderNewPage(res, new Book())
+  renderNewPage(res, new Book());
 })
 
 // Create Book Route
@@ -43,9 +43,8 @@ router.post('/', async (req, res) => {
   })
   saveCover(book, req.body.cover);
   try {
-    const newBook = await book.save()
-    // res.redirect(`books/${newBook.id}`)
-    res.redirect(`books`)
+    const newBook = await book.save();
+    res.redirect(`books/${newBook.id}`);
   } catch {
     renderNewPage(res, book, true)
   }
@@ -107,7 +106,7 @@ router.delete("/:id", async (req, res) => {
     if (book != null) {
       res.render("books/show", {
         book: book,
-        errorMessage: "Could not remove book"
+        errorMessage: "Could Not Remove Book"
       })
     } else {
       res.redirect("/");
@@ -145,11 +144,11 @@ async function renderFormPage(res, book, form, hasError = false) {
 
 function saveCover(book, coverEncoded) {
   if (coverEncoded == null) return
-  const cover = JSON.parse(coverEncoded)
+  const cover = JSON.parse(coverEncoded);
   if (cover != null && imageMimeTypes.includes(cover.type)) {
-    book.coverImage = new Buffer.from(cover.data, 'base64')
-    book.coverImageType = cover.type
+    book.coverImage = new Buffer.from(cover.data, 'base64');
+    book.coverImageType = cover.type;
   }
 }
 
-module.exports = router
+module.exports = router;
